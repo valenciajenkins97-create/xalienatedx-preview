@@ -3,273 +3,421 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>xAlienatedx | CREATE YOUR OWN LANE</title>
+    <title>xAlienatedx</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #08090a;
-            --text-primary: #e0e0e0;
-            --text-dim: #555555;
-            --accent: #ff6b1a;
+            --black: #0a0a0a;
+            --white: #ffffff;
+            --off-white: #f5f5f3;
+            --mid: #888888;
+            --light: #e0e0e0;
+            --border: #e8e8e8;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; cursor: none; }
-        body { background: var(--bg-dark); color: var(--text-primary); font-family: 'Space Mono', monospace; overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--white); color: var(--black); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        a { text-decoration: none; color: inherit; }
+        img { display: block; max-width: 100%; }
 
-        /* NOISE */
-        .noise { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; opacity:0.05;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
-        .scan { position:fixed; top:0; left:0; width:100vw; height:2px; background:rgba(255,107,26,0.15); z-index:9998; animation:scan 8s linear infinite; pointer-events:none; }
-        @keyframes scan { 0%{transform:translateY(-100vh)} 100%{transform:translateY(100vh)} }
+        /* ── NAV ── */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border);
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 0 2rem;
+            height: 52px;
+        }
+        .nav-left { display: flex; gap: 2rem; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+        .nav-left a { color: var(--black); transition: color 0.2s; }
+        .nav-left a:hover { color: var(--mid); }
+        .nav-brand { text-align: center; font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em; }
+        .nav-right { display: flex; justify-content: flex-end; gap: 1.5rem; font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; }
+        .nav-right a { color: var(--black); transition: color 0.2s; }
+        .nav-right a:hover { color: var(--mid); }
 
-        /* CURSOR */
-        .cursor-dot, .cursor-ring { position:fixed; top:0; left:0; transform:translate(-50%,-50%); border-radius:50%; z-index:10000; pointer-events:none; transition: transform 0.15s; }
-        .cursor-dot { width:4px; height:4px; background:#ff6b1a; }
-        .cursor-ring { width:22px; height:22px; border:1px solid rgba(255,107,26,0.6); transition:width 0.2s,height 0.2s; }
+        /* ── ANNOUNCEMENT BAR ── */
+        .announce {
+            background: var(--black); color: var(--white);
+            text-align: center; font-size: 0.7rem; letter-spacing: 0.1em;
+            text-transform: uppercase; padding: 0.6rem;
+            margin-top: 52px;
+        }
 
-        /* HEADER */
-        header { position:fixed; top:0; width:100%; padding:1.75rem 2.5rem; display:flex; justify-content:space-between; align-items:center; z-index:100; mix-blend-mode:difference; }
-        .brand-mark { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; letter-spacing:-0.03em; text-transform:uppercase; color:#fff; }
-        .brand-mark span { color: var(--accent); }
-        .nav-links { display:flex; gap:2.5rem; list-style:none; font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; }
-        .nav-links a { color:var(--text-primary); text-decoration:none; transition:color 0.2s; }
-        .nav-links a:hover { color:var(--accent); }
+        /* ── HERO ── */
+        .hero {
+            width: 100%; height: calc(100vh - 52px - 34px);
+            position: relative; overflow: hidden; background: #111;
+        }
+        .hero-img {
+            width: 100%; height: 100%; object-fit: cover;
+            opacity: 0.85; transition: opacity 0.5s;
+        }
+        .hero-caption {
+            position: absolute; bottom: 2.5rem; left: 2.5rem;
+            font-size: clamp(1.1rem, 2.5vw, 1.8rem);
+            color: var(--white); font-weight: 300;
+            font-family: 'Playfair Display', serif; font-style: italic;
+            max-width: 600px; line-height: 1.3;
+            text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+        }
+        .hero-shop-btn {
+            position: absolute; bottom: 2.5rem; right: 2.5rem;
+            background: var(--white); color: var(--black);
+            font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+            font-weight: 600; padding: 0.75rem 1.5rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .hero-shop-btn:hover { background: var(--black); color: var(--white); }
 
-        /* HERO */
-        .hero { height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative;
-            background:radial-gradient(ellipse at 50% 40%, #1a1008 0%, #08090a 65%); text-align:center; }
-        .chrome-blob { position:absolute; border-radius:50%; filter:blur(60px); animation:morph 12s infinite alternate; pointer-events:none; }
-        .blob-1 { width:350px; height:350px; top:15%; left:15%; background:radial-gradient(circle, rgba(255,107,26,0.15), transparent); }
-        .blob-2 { width:450px; height:450px; bottom:15%; right:10%; background:radial-gradient(circle, rgba(200,80,0,0.1), transparent); animation-delay:-6s; }
-        @keyframes morph { 0%{border-radius:40% 60% 70% 30%/40% 50% 60% 50%} 100%{border-radius:60% 40% 30% 70%/50% 40% 50% 60%} }
+        /* ── SECTION HEADERS ── */
+        .section-head {
+            padding: 3rem 2.5rem 1.5rem;
+            display: flex; justify-content: space-between; align-items: baseline;
+        }
+        .section-head h2 { font-size: 1rem; font-weight: 600; letter-spacing: 0.04em; }
+        .section-head .sub { font-size: 0.75rem; color: var(--mid); }
+        .section-head .see-all { font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--mid); transition: color 0.2s; }
+        .section-head .see-all:hover { color: var(--black); }
 
-        .hero-label { font-size:0.7rem; letter-spacing:0.2em; color:var(--accent); margin-bottom:1.5rem; text-transform:uppercase; }
-        .hero-title { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(4rem,14vw,11rem); line-height:0.85; text-transform:uppercase;
-            color:transparent;
-            background:linear-gradient(180deg,#ffffff 0%,#e0e0e0 20%,#888 50%,#404040 51%,#b0b0b0 80%,#fff 100%);
-            -webkit-background-clip:text; background-clip:text;
-            filter:drop-shadow(0 0 20px rgba(255,107,26,0.2));
-            letter-spacing:-0.04em; position:relative; z-index:2; }
-        .hero-title .x { color:transparent; background:linear-gradient(180deg,#ff9f5a,#ff6b1a,#cc4400); -webkit-background-clip:text; background-clip:text; }
-        .hero-sub { margin-top:2rem; font-size:0.75rem; color:var(--text-dim); letter-spacing:0.15em; text-transform:uppercase; display:flex; align-items:center; gap:1rem; }
-        .hero-sub .line { height:1px; width:40px; background:#333; }
-        .hero-cta { margin-top:3.5rem; display:flex; gap:1.5rem; }
-        .btn { padding:1.25rem 2.5rem; background:transparent; border:1px solid; font-family:'Space Mono',monospace; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; text-decoration:none; position:relative; overflow:hidden; transition:all 0.3s cubic-bezier(0.19,1,0.22,1); display:inline-block; }
-        .btn-primary { border-color:var(--accent); color:var(--accent); }
-        .btn-primary::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:var(--accent); transition:left 0.35s cubic-bezier(0.19,1,0.22,1); z-index:-1; }
-        .btn-primary:hover { color:var(--bg-dark); }
-        .btn-primary:hover::before { left:0; }
-        .btn-secondary { border-color:#333; color:var(--text-dim); }
-        .btn-secondary:hover { border-color:#666; color:var(--text-primary); }
+        /* ── PRODUCT SLIDER ── */
+        .slider-wrap { position: relative; }
+        .product-slider {
+            display: flex; gap: 1px; overflow-x: auto; scroll-snap-type: x mandatory;
+            scrollbar-width: none; padding: 0 2.5rem 2rem;
+        }
+        .product-slider::-webkit-scrollbar { display: none; }
+        .product-item {
+            flex: 0 0 calc(25% - 1px); scroll-snap-align: start;
+            position: relative; cursor: pointer;
+        }
+        .product-item:hover .product-img { transform: scale(1.02); }
+        .product-img-wrap { overflow: hidden; background: var(--off-white); aspect-ratio: 3/4; position: relative; }
+        .product-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.19,1,0.22,1); }
+        .product-info { padding: 0.75rem 0 0; }
+        .product-name { font-size: 0.8rem; font-weight: 500; margin-bottom: 0.2rem; line-height: 1.3; }
+        .product-price { font-size: 0.78rem; color: var(--mid); }
+        .sold-out-tag { position: absolute; top: 0.75rem; left: 0.75rem; background: var(--white); color: var(--black); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.2rem 0.5rem; font-weight: 600; }
+        .slider-btn { position: absolute; top: 40%; transform: translateY(-50%); background: var(--white); border: 1px solid var(--border); width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; z-index: 2; transition: background 0.2s; }
+        .slider-btn:hover { background: var(--black); color: var(--white); }
+        .slider-btn.prev { left: 0.5rem; }
+        .slider-btn.next { right: 0.5rem; }
+        .shop-btn-wrap { text-align: center; padding: 0 0 3rem; }
+        .shop-btn { display: inline-block; border: 1px solid var(--black); padding: 0.85rem 3rem; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; transition: all 0.2s; }
+        .shop-btn:hover { background: var(--black); color: var(--white); }
 
-        /* DIVIDER */
-        .spike { width:100%; height:80px; overflow:hidden; }
+        /* ── EDITORIAL STRIP ── */
+        .editorial { background: var(--off-white); padding: 5rem 2.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+        .editorial-img-wrap { aspect-ratio: 4/5; overflow: hidden; }
+        .editorial-img { width: 100%; height: 100%; object-fit: cover; }
+        .editorial-text { max-width: 480px; }
+        .editorial-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--mid); margin-bottom: 1.5rem; }
+        .editorial-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.1; margin-bottom: 1.5rem; font-weight: 700; }
+        .editorial-text p { font-size: 0.88rem; color: #444; line-height: 1.85; margin-bottom: 1rem; }
+        .editorial-text .cta { display: inline-block; margin-top: 1.5rem; border-bottom: 1px solid var(--black); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; padding-bottom: 0.2rem; transition: color 0.2s, border-color 0.2s; }
+        .editorial-text .cta:hover { color: var(--mid); border-color: var(--mid); }
 
-        /* MANIFESTO */
-        .manifesto { padding:6rem 2.5rem; text-align:center; border-top:1px solid #111; }
-        .manifesto p { font-family:'Syne',sans-serif; font-size:clamp(1.5rem,4vw,3rem); font-weight:700; line-height:1.2; max-width:900px; margin:0 auto; text-transform:uppercase; color:#fff; }
-        .manifesto p em { color:var(--accent); font-style:normal; }
-        .manifesto-sub { font-size:0.8rem; color:var(--text-dim); margin-top:2rem; letter-spacing:0.1em; }
-
-        /* PRODUCTS */
-        .products { padding:4rem 0 6rem; }
-        .products-header { padding:0 2.5rem 3rem; display:flex; justify-content:space-between; align-items:flex-end; }
-        .products-header h2 { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(2rem,5vw,4rem); text-transform:uppercase; line-height:0.9; }
-        .products-header h2 span { color:var(--accent); }
-        .products-header a { font-size:0.7rem; color:var(--text-dim); text-decoration:none; letter-spacing:0.12em; text-transform:uppercase; transition:color 0.2s; }
-        .products-header a:hover { color:var(--accent); }
-
-        .grid { display:grid; grid-template-columns:repeat(12,1fr); gap:1rem; padding:0 1rem; }
-
-        .product-card { position:relative; overflow:hidden; border:1px solid #111; transition:border-color 0.3s; }
-        .product-card:hover { border-color:#333; }
-        .product-card:nth-child(1) { grid-column:1/6; height:65vh; margin-top:0; }
-        .product-card:nth-child(2) { grid-column:6/13; height:75vh; }
-        .product-card:nth-child(3) { grid-column:1/5; height:60vh; margin-top:-8rem; }
-        .product-card:nth-child(4) { grid-column:5/9; height:55vh; margin-top:4rem; }
-        .product-card:nth-child(5) { grid-column:9/13; height:55vh; margin-top:1rem; }
-
-        .card-img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; filter:brightness(0.7) contrast(1.1); transition:transform 0.6s cubic-bezier(0.19,1,0.22,1), filter 0.4s; }
-        .product-card:hover .card-img { transform:scale(1.04); filter:brightness(0.85) contrast(1.1); }
-        .card-overlay { position:absolute; bottom:0; left:0; right:0; padding:1.5rem; background:linear-gradient(to top, rgba(8,9,10,0.95) 0%, transparent 100%); z-index:2; }
-        .card-name { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; text-transform:uppercase; margin-bottom:0.4rem; }
-        .card-price { font-size:0.75rem; color:#888; }
-        .card-link { position:absolute; inset:0; z-index:3; }
-        .card-tag { position:absolute; top:1rem; left:1rem; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.3rem 0.6rem; background:var(--accent); color:#000; font-weight:700; z-index:4; }
-
-        /* CATEGORIES */
-        .categories { padding:6rem 2.5rem; border-top:1px solid #111; }
-        .categories h2 { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(1.5rem,3vw,2.5rem); text-transform:uppercase; margin-bottom:3rem; }
-        .cat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
-        .cat-card { border:1px solid #1a1a1a; padding:2.5rem 1.5rem; text-align:center; text-decoration:none; color:var(--text-primary); transition:all 0.3s; position:relative; overflow:hidden; }
-        .cat-card::before { content:''; position:absolute; inset:0; background:var(--accent); transform:scaleY(0); transform-origin:bottom; transition:transform 0.35s cubic-bezier(0.19,1,0.22,1); z-index:0; }
-        .cat-card:hover::before { transform:scaleY(1); }
-        .cat-card:hover { color:#000; border-color:var(--accent); }
-        .cat-icon { font-size:2rem; margin-bottom:1rem; position:relative; z-index:1; }
-        .cat-name { font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; text-transform:uppercase; position:relative; z-index:1; }
-        .cat-count { font-size:0.65rem; color:inherit; opacity:0.6; margin-top:0.3rem; letter-spacing:0.1em; position:relative; z-index:1; }
-
-        /* MARQUEE */
-        .marquee-wrap { border-top:1px solid #111; border-bottom:1px solid #111; overflow:hidden; padding:1rem 0; background:#0d0d0d; }
-        .marquee-track { display:flex; gap:3rem; animation:marquee 24s linear infinite; white-space:nowrap; width:max-content; }
-        .marquee-item { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; text-transform:uppercase; color:#1a1a1a; -webkit-text-stroke:1px #2a2a2a; display:flex; align-items:center; gap:3rem; }
-        .marquee-item .dot { color:var(--accent); -webkit-text-stroke:0; font-size:0.8rem; }
+        /* ── MARQUEE ── */
+        .marquee-wrap { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); overflow: hidden; padding: 1rem 0; }
+        .marquee-track { display: flex; gap: 0; animation: marquee 30s linear infinite; white-space: nowrap; width: max-content; }
+        .marquee-item { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mid); padding: 0 3rem; border-right: 1px solid var(--border); font-weight: 500; }
         @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 
-        /* ETHOS */
-        .ethos { padding:8rem 2.5rem; display:grid; grid-template-columns:1fr 1fr; gap:6rem; align-items:center; border-top:1px solid #111; }
-        .ethos-text h2 { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(2rem,4vw,3.5rem); text-transform:uppercase; line-height:1; margin-bottom:2rem; }
-        .ethos-text h2 em { color:var(--accent); font-style:normal; display:block; }
-        .ethos-text p { font-size:0.85rem; color:#666; line-height:1.9; max-width:440px; }
-        .ethos-stats { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
-        .stat { border-top:1px solid #1a1a1a; padding-top:1.5rem; }
-        .stat-val { font-family:'Syne',sans-serif; font-weight:800; font-size:2.5rem; color:#fff; line-height:1; }
-        .stat-label { font-size:0.65rem; color:#444; text-transform:uppercase; letter-spacing:0.1em; margin-top:0.4rem; }
+        /* ── ABOUT ── */
+        .about { padding: 7rem 2.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+        .about-img-wrap { aspect-ratio: 4/5; overflow: hidden; }
+        .about-img { width: 100%; height: 100%; object-fit: cover; }
+        .about-text { }
+        .about-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 3rem); line-height: 1.15; margin-bottom: 1.5rem; }
+        .about-text p { font-size: 0.88rem; color: #555; line-height: 1.9; margin-bottom: 1rem; }
+        .about-text .cta { display: inline-block; margin-top: 1.5rem; border-bottom: 1px solid var(--black); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; padding-bottom: 0.2rem; }
 
-        /* FOOTER */
-        footer { padding:5rem 2.5rem 2rem; border-top:1px solid #111; }
-        .footer-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4rem; }
-        .footer-brand { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(3rem,7vw,6rem); color:#111; text-transform:uppercase; line-height:0.85; -webkit-text-stroke:1px #222; }
-        .footer-brand span { color:transparent; -webkit-text-stroke:1px var(--accent); }
-        .footer-nav { display:grid; grid-template-columns:repeat(2,1fr); gap:0.5rem 3rem; font-size:0.72rem; }
-        .footer-nav a { color:#444; text-decoration:none; text-transform:uppercase; letter-spacing:0.08em; transition:color 0.2s; }
-        .footer-nav a:hover { color:var(--accent); }
-        .footer-bottom { border-top:1px solid #111; padding-top:1.5rem; display:flex; justify-content:space-between; font-size:0.65rem; color:#333; text-transform:uppercase; letter-spacing:0.08em; }
+        /* ── CATEGORIES ── */
+        .categories { padding: 4rem 2.5rem; }
+        .categories h2 { font-size: 1rem; font-weight: 600; letter-spacing: 0.04em; margin-bottom: 1.5rem; }
+        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); }
+        .cat-item { background: var(--white); padding: 2rem 1.5rem; text-align: center; transition: background 0.2s; cursor: pointer; }
+        .cat-item:hover { background: var(--black); color: var(--white); }
+        .cat-item:hover .cat-label { color: var(--white); }
+        .cat-icon { font-size: 1.8rem; margin-bottom: 0.75rem; }
+        .cat-name { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+        .cat-label { font-size: 0.7rem; color: var(--mid); transition: color 0.2s; }
 
-        /* MOBILE */
+        /* ── FOOTER ── */
+        footer { border-top: 1px solid var(--border); padding: 3rem 2.5rem 2rem; }
+        .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 3rem; margin-bottom: 3rem; }
+        .footer-brand { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; }
+        .footer-tagline { font-size: 0.8rem; color: var(--mid); line-height: 1.6; max-width: 240px; }
+        .footer-col h4 { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; margin-bottom: 1rem; }
+        .footer-col a { display: block; font-size: 0.8rem; color: var(--mid); margin-bottom: 0.5rem; transition: color 0.2s; }
+        .footer-col a:hover { color: var(--black); }
+        .newsletter-input { display: flex; border: 1px solid var(--border); margin-top: 0.5rem; }
+        .newsletter-input input { flex: 1; padding: 0.7rem; font-size: 0.75rem; border: none; outline: none; font-family: 'Inter', sans-serif; background: transparent; }
+        .newsletter-input button { padding: 0.7rem 1rem; background: var(--black); color: var(--white); border: none; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; }
+        .newsletter-input button:hover { background: #333; }
+        .footer-bottom { border-top: 1px solid var(--border); padding-top: 1.5rem; display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--mid); }
+
+        /* ── MOBILE ── */
         @media (max-width: 768px) {
-            * { cursor: auto !important; }
-            .cursor-dot, .cursor-ring, .scan { display:none; }
-            header { padding:1.25rem; }
-            .nav-links { gap:1.5rem; }
-            .hero-title { font-size:3.5rem; }
-            .hero-cta { flex-direction:column; align-items:center; }
-            .btn { width:100%; text-align:center; }
-            .grid { display:flex; flex-direction:column; padding:0 1rem; }
-            .product-card { width:100%; height:55vw !important; margin:0 !important; }
-            .cat-grid { grid-template-columns:1fr 1fr; }
-            .ethos { grid-template-columns:1fr; gap:3rem; }
-            .footer-top { flex-direction:column; gap:2rem; }
-            .footer-bottom { flex-direction:column; gap:0.5rem; }
+            nav { grid-template-columns: 1fr 1fr; }
+            .nav-left { display: none; }
+            .nav-brand { text-align: left; }
+            .hero { height: 70vw; min-height: 300px; }
+            .product-item { flex: 0 0 75%; }
+            .editorial, .about { grid-template-columns: 1fr; gap: 2rem; }
+            .editorial-img-wrap, .about-img-wrap { aspect-ratio: 4/3; }
+            .cat-grid { grid-template-columns: 1fr 1fr; }
+            .footer-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+            .footer-bottom { flex-direction: column; gap: 0.5rem; }
         }
     </style>
 </head>
 <body>
-    <div class="noise"></div>
-    <div class="scan"></div>
-    <div class="cursor-dot" id="cursorDot"></div>
-    <div class="cursor-ring" id="cursorRing"></div>
 
-    <header>
-        <div class="brand-mark"><span>x</span>Alienatedx</div>
-        <ul class="nav-links">
-            <li><a href="https://xalienatedxofficial.com/collections/all" target="_blank">Shop</a></li>
-            <li><a href="#products">Collection</a></li>
-            <li><a href="#ethos">About</a></li>
-            <li><a href="https://xalienatedxofficial.com/cart" target="_blank">Cart</a></li>
-        </ul>
-    </header>
+    <!-- NAV -->
+    <nav>
+        <div class="nav-left">
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank">Shop</a>
+            <a href="#new-arrivals">New Arrivals</a>
+            <a href="#about">About</a>
+        </div>
+        <div class="nav-brand">xAlienatedx</div>
+        <div class="nav-right">
+            <a href="https://xalienatedxofficial.com/search" target="_blank">Search</a>
+            <a href="https://xalienatedxofficial.com/cart" target="_blank">Cart</a>
+        </div>
+    </nav>
+
+    <!-- ANNOUNCEMENT -->
+    <div class="announce">Free Shipping on Orders Over $75</div>
 
     <!-- HERO -->
     <section class="hero">
-        <div class="chrome-blob blob-1"></div>
-        <div class="chrome-blob blob-2"></div>
-        <div class="hero-label">[ New Arrivals — 2026 ]</div>
-        <h1 class="hero-title">
-            <span class="x">x</span>ALIEN<br>ATED<span class="x">x</span>
-        </h1>
-        <div class="hero-sub">
-            <span class="line"></span>
-            <span>Create Your Own Lane</span>
-            <span class="line"></span>
+        <img class="hero-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/mens-fitted-t-shirt-black-front-63db20f8cb4b7.jpg?v=1675305229" alt="xAlienatedx">
+        <div class="hero-caption">
+            "Be yourself; life is what you make it."
         </div>
-        <div class="hero-cta">
-            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="btn btn-primary">Shop the Collection</a>
-            <a href="#products" class="btn btn-secondary">View Lookbook</a>
-        </div>
+        <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="hero-shop-btn">Shop Now</a>
     </section>
 
-    <!-- SPIKE DIVIDER -->
-    <div class="spike">
-        <svg width="100%" height="100%" viewBox="0 0 1200 80" preserveAspectRatio="none">
-            <path d="M0,40 Q150,40 300,40 L320,8 L340,72 L360,40 L840,40 L860,0 L880,80 L900,40 Q1050,40 1200,40" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
-        </svg>
-    </div>
-
-    <!-- MANIFESTO -->
-    <section class="manifesto">
-        <p>Be yourself. Life is what you <em>make it</em>. You don't have to fit with any crowd. <em>Alienate yourself</em> from the naysayers and stay in your lane.</p>
-        <div class="manifesto-sub">[ EST. 2021 — STAY ALIENATED ]</div>
+    <!-- NEW ARRIVALS -->
+    <section id="new-arrivals">
+        <div class="section-head">
+            <div>
+                <h2>New Arrivals</h2>
+                <div class="sub">Latest drops</div>
+            </div>
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="see-all">View All →</a>
+        </div>
+        <div class="slider-wrap">
+            <button class="slider-btn prev" onclick="slide('new', -1)">‹</button>
+            <div class="product-slider" id="new">
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/franky-tee" target="_blank">
+                        <div class="product-img-wrap">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/mens-fitted-t-shirt-black-front-63db20f8cb4b7.jpg?v=1675305229" alt="Franky Tee">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Franky Tee</div>
+                            <div class="product-price">$35.00 USD</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/unisex-unmasked-hoodie" target="_blank">
+                        <div class="product-img-wrap">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-essential-eco-hoodie-desert-dust-front-63f428e876e79.jpg?v=1676945655" alt="Unmasked Hoodie">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Unisex Unmasked Hoodie</div>
+                            <div class="product-price">$65.00 USD</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/dark-side-of-the-moon-hoodie" target="_blank">
+                        <div class="product-img-wrap">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-premium-hoodie-black-front-63ddd7f707008.jpg?v=1675483138" alt="Dark Side Hoodie">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Dark Side of the Moon Hoodie</div>
+                            <div class="product-price">$50.00 USD</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/moon-rock-hoodie" target="_blank">
+                        <div class="product-img-wrap">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-premium-hoodie-carbon-grey-front-63dceda904c7d.jpg?v=1675423159" alt="Moon Rock Hoodie">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Moon Rock Hoodie</div>
+                            <div class="product-price">$45.00 USD</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/blue-racks-hoodie" target="_blank">
+                        <div class="product-img-wrap">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-premium-hoodie-team-royal-front-63dd0536ab5a4.jpg?v=1675429187" alt="Blue Racks Hoodie">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Blue Racks Hoodie</div>
+                            <div class="product-price">$45.00 USD</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/xalienatedx-trucker-2" target="_blank">
+                        <div class="product-img-wrap">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/foam-trucker-hat-red-one-size-front-63db29822f0a2.jpg?v=1675307403" alt="Trucker Hat">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">xAlienatedx Trucker</div>
+                            <div class="product-price">$35.00 USD</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/xalienatedx-beanie" target="_blank">
+                        <div class="product-img-wrap">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/IMG_0219.jpg?v=1641255470" alt="Beanie">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">xAlienatedx Beanie</div>
+                            <div class="product-price">$20.00 USD</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/unmasked-sweatshirt" target="_blank">
+                        <div class="product-img-wrap" style="background:#1a1a1a">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/mens-fitted-t-shirt-black-front-63db20f8cb4b7.jpg?v=1675305229" alt="Unmasked Sweatshirt">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Unmasked Sweatshirt</div>
+                            <div class="product-price">$60.00 USD</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <button class="slider-btn next" onclick="slide('new', 1)">›</button>
+        </div>
+        <div class="shop-btn-wrap">
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="shop-btn">Shop Now</a>
+        </div>
     </section>
 
     <!-- MARQUEE -->
     <div class="marquee-wrap">
         <div class="marquee-track">
-            <span class="marquee-item">CREATE YOUR OWN LANE <span class="dot">◆</span></span>
-            <span class="marquee-item">STAY ALIENATED <span class="dot">◆</span></span>
-            <span class="marquee-item">BE YOUR OWN VIBE <span class="dot">◆</span></span>
-            <span class="marquee-item">CREATE YOUR OWN WAVE <span class="dot">◆</span></span>
-            <span class="marquee-item">xALIENATEDx <span class="dot">◆</span></span>
-            <span class="marquee-item">STAY IN YOUR LANE <span class="dot">◆</span></span>
-            <span class="marquee-item">CREATE YOUR OWN LANE <span class="dot">◆</span></span>
-            <span class="marquee-item">STAY ALIENATED <span class="dot">◆</span></span>
-            <span class="marquee-item">BE YOUR OWN VIBE <span class="dot">◆</span></span>
-            <span class="marquee-item">CREATE YOUR OWN WAVE <span class="dot">◆</span></span>
-            <span class="marquee-item">xALIENATEDx <span class="dot">◆</span></span>
-            <span class="marquee-item">STAY IN YOUR LANE <span class="dot">◆</span></span>
+            <span class="marquee-item">Create Your Own Lane</span>
+            <span class="marquee-item">Stay Alienated</span>
+            <span class="marquee-item">Be Your Own Vibe</span>
+            <span class="marquee-item">Create Your Own Wave</span>
+            <span class="marquee-item">Stay In Your Lane</span>
+            <span class="marquee-item">xAlienatedx</span>
+            <span class="marquee-item">Create Your Own Lane</span>
+            <span class="marquee-item">Stay Alienated</span>
+            <span class="marquee-item">Be Your Own Vibe</span>
+            <span class="marquee-item">Create Your Own Wave</span>
+            <span class="marquee-item">Stay In Your Lane</span>
+            <span class="marquee-item">xAlienatedx</span>
         </div>
     </div>
 
-    <!-- PRODUCTS -->
-    <section class="products" id="products">
-        <div class="products-header">
-            <h2>THE<br><span>LAYS</span></h2>
-            <a href="https://xalienatedxofficial.com/collections/all" target="_blank">View All 16 Products →</a>
+    <!-- EDITORIAL / COLLECTION HIGHLIGHT -->
+    <section class="editorial">
+        <div class="editorial-img-wrap">
+            <img class="editorial-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-essential-eco-hoodie-desert-dust-front-63f428e876e79.jpg?v=1676945655" alt="Unmasked Collection">
         </div>
-        <div class="grid">
-            <div class="product-card">
-                <div class="card-tag">Signature</div>
-                <img class="card-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/mens-fitted-t-shirt-black-front-63db20f8cb4b7.jpg?v=1675305229" alt="Franky Tee">
-                <div class="card-overlay">
-                    <div class="card-name">Franky Tee</div>
-                    <div class="card-price">$35.00 USD // HEAVYWEIGHT COTTON</div>
-                </div>
-                <a href="https://xalienatedxofficial.com/products/franky-tee" target="_blank" class="card-link"></a>
+        <div class="editorial-text">
+            <div class="editorial-label">Featured Collection</div>
+            <h2>Unmasked Collection</h2>
+            <p>You don't need a mask to fit in. The Unmasked collection is built for those who show up exactly as they are — no filters, no fronts, no apologies.</p>
+            <p>Heavyweight fleece, dropped shoulders, and a fit that speaks before you do.</p>
+            <a href="https://xalienatedxofficial.com/products/unisex-unmasked-hoodie" target="_blank" class="cta">Shop the Collection →</a>
+        </div>
+    </section>
+
+    <!-- BEST SELLERS -->
+    <section id="best-sellers">
+        <div class="section-head">
+            <div>
+                <h2>Best Sellers</h2>
+                <div class="sub">The ones that never miss</div>
             </div>
-            <div class="product-card">
-                <div class="card-tag">Best Seller</div>
-                <img class="card-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-essential-eco-hoodie-desert-dust-front-63f428e876e79.jpg?v=1676945655" alt="Unmasked Hoodie">
-                <div class="card-overlay">
-                    <div class="card-name">Unmasked Hoodie</div>
-                    <div class="card-price">$65.00 USD // UNISEX FIT</div>
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="see-all">View All →</a>
+        </div>
+        <div class="slider-wrap">
+            <button class="slider-btn prev" onclick="slide('best', -1)">‹</button>
+            <div class="product-slider" id="best">
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/franky-tee" target="_blank">
+                        <div class="product-img-wrap">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/mens-fitted-t-shirt-royal-blue-front-63db20f8cd69a.jpg?v=1675305234" alt="Franky Tee Blue">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Franky Tee — Royal Blue</div>
+                            <div class="product-price">$35.00 USD</div>
+                        </div>
+                    </a>
                 </div>
-                <a href="https://xalienatedxofficial.com/products/unisex-unmasked-hoodie" target="_blank" class="card-link"></a>
-            </div>
-            <div class="product-card">
-                <img class="card-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-premium-hoodie-black-front-63ddd7f707008.jpg?v=1675483138" alt="Dark Side of the Moon Hoodie">
-                <div class="card-overlay">
-                    <div class="card-name">Dark Side Hoodie</div>
-                    <div class="card-price">$50.00 USD // PREMIUM</div>
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/dark-side-of-the-moon-hoodie" target="_blank">
+                        <div class="product-img-wrap">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-premium-hoodie-black-front-63ddd7f707008.jpg?v=1675483138" alt="Dark Side Hoodie">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Dark Side of the Moon Hoodie</div>
+                            <div class="product-price">$50.00 USD</div>
+                        </div>
+                    </a>
                 </div>
-                <a href="https://xalienatedxofficial.com/products/dark-side-of-the-moon-hoodie" target="_blank" class="card-link"></a>
-            </div>
-            <div class="product-card">
-                <img class="card-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/foam-trucker-hat-red-one-size-front-63db29822f0a2.jpg?v=1675307403" alt="Trucker Hat">
-                <div class="card-overlay">
-                    <div class="card-name">xAlienatedx Trucker</div>
-                    <div class="card-price">$35.00 USD // FOAM CAP</div>
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/moon-rock-sweatpants" target="_blank">
+                        <div class="product-img-wrap">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-premium-hoodie-carbon-grey-front-63dceda904c7d.jpg?v=1675423159" alt="Moon Rock Sweatpants">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Moon Rock Sweatpants</div>
+                            <div class="product-price">$45.00 USD</div>
+                        </div>
+                    </a>
                 </div>
-                <a href="https://xalienatedxofficial.com/products/xalienatedx-trucker-2" target="_blank" class="card-link"></a>
-            </div>
-            <div class="product-card">
-                <img class="card-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-premium-hoodie-team-royal-front-63dd0536ab5a4.jpg?v=1675429187" alt="Blue Racks Hoodie">
-                <div class="card-overlay">
-                    <div class="card-name">Blue Racks Hoodie</div>
-                    <div class="card-price">$45.00 USD // PREMIUM</div>
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/xalienatedx-trucker-2" target="_blank">
+                        <div class="product-img-wrap">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/foam-trucker-hat-red-one-size-front-63db29822f0a2.jpg?v=1675307403" alt="Trucker">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">xAlienatedx Trucker</div>
+                            <div class="product-price">$35.00 USD</div>
+                        </div>
+                    </a>
                 </div>
-                <a href="https://xalienatedxofficial.com/products/blue-racks-hoodie" target="_blank" class="card-link"></a>
+                <div class="product-item">
+                    <a href="https://xalienatedxofficial.com/products/blue-racks-hoodie" target="_blank">
+                        <div class="product-img-wrap">
+                            <img class="product-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-premium-hoodie-team-royal-front-63dd0536ab5a4.jpg?v=1675429187" alt="Blue Racks Hoodie">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-name">Blue Racks Hoodie</div>
+                            <div class="product-price">$45.00 USD</div>
+                        </div>
+                    </a>
+                </div>
             </div>
+            <button class="slider-btn next" onclick="slide('best', 1)">›</button>
+        </div>
+        <div class="shop-btn-wrap">
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="shop-btn">Shop Now</a>
         </div>
     </section>
 
@@ -277,107 +425,84 @@
     <section class="categories">
         <h2>Shop by Category</h2>
         <div class="cat-grid">
-            <a href="https://xalienatedxofficial.com/collections/all?sort_by=title" target="_blank" class="cat-card">
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="cat-item">
                 <div class="cat-icon">👕</div>
                 <div class="cat-name">T-Shirts</div>
-                <div class="cat-count">Starting at $35</div>
+                <div class="cat-label">Starting at $35</div>
             </a>
-            <a href="https://xalienatedxofficial.com/collections/all?sort_by=title" target="_blank" class="cat-card">
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="cat-item">
                 <div class="cat-icon">🧥</div>
                 <div class="cat-name">Hoodies & Sweats</div>
-                <div class="cat-count">Starting at $45</div>
+                <div class="cat-label">Starting at $45</div>
             </a>
-            <a href="https://xalienatedxofficial.com/collections/all?sort_by=title" target="_blank" class="cat-card">
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="cat-item">
                 <div class="cat-icon">🧢</div>
                 <div class="cat-name">Truckers</div>
-                <div class="cat-count">$35 each</div>
+                <div class="cat-label">$35 each</div>
             </a>
-            <a href="https://xalienatedxofficial.com/collections/all?sort_by=title" target="_blank" class="cat-card">
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="cat-item">
                 <div class="cat-icon">🎽</div>
-                <div class="cat-name">Beanies & More</div>
-                <div class="cat-count">Starting at $20</div>
+                <div class="cat-name">Beanies & Accessories</div>
+                <div class="cat-label">Starting at $20</div>
             </a>
         </div>
     </section>
 
-    <!-- ETHOS -->
-    <section class="ethos" id="ethos">
-        <div class="ethos-text">
-            <h2>Stay In <em>Your Lane.</em></h2>
-            <p>xAlienatedx was built for the ones who never fit in — and never wanted to. We don't follow trends. We don't chase clout. We make gear for people who create their own path, move at their own pace, and refuse to let anyone define them.</p>
-            <br>
-            <p style="color:#444">Be yourself; life is what you make it. You don't have to fit with any crowd just because that's what's in. Alienate yourself from the naysayers and stay in your lane.</p>
-            <br>
-            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="btn btn-primary" style="cursor:pointer">Shop Now →</a>
+    <!-- ABOUT -->
+    <section class="about" id="about">
+        <div class="about-img-wrap">
+            <img class="about-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-premium-hoodie-black-front-63ddd7f707008.jpg?v=1675483138" alt="xAlienatedx">
         </div>
-        <div class="ethos-stats">
-            <div class="stat">
-                <div class="stat-val">16+</div>
-                <div class="stat-label">Products Available</div>
-            </div>
-            <div class="stat">
-                <div class="stat-val">$20</div>
-                <div class="stat-label">Starting Price</div>
-            </div>
-            <div class="stat">
-                <div class="stat-val">100%</div>
-                <div class="stat-label">Stay Alienated</div>
-            </div>
-            <div class="stat">
-                <div class="stat-val">0</div>
-                <div class="stat-label">F*cks Given</div>
-            </div>
+        <div class="about-text">
+            <h2>Created by someone who never fit in — and never wanted to.</h2>
+            <p>xAlienatedx was built on a simple belief: you don't have to fit with any crowd just because that's what's in.</p>
+            <p>Be yourself. Life is what you make it. Alienate yourself from the naysayers and stay in your lane.</p>
+            <p>Every piece is made for the ones who move different — who create their own wave, live on their own terms, and refuse to follow.</p>
+            <p><em>Create Your Own Lane.</em></p>
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="cta">Shop the Collection →</a>
         </div>
     </section>
 
     <!-- FOOTER -->
     <footer>
         <div class="footer-top">
-            <div class="footer-brand"><span>x</span>ALIENATED<span>x</span></div>
-            <div class="footer-nav">
-                <a href="https://xalienatedxofficial.com/collections/all" target="_blank">Shop All</a>
-                <a href="https://xalienatedxofficial.com/collections/all" target="_blank">Hoodies</a>
+            <div>
+                <div class="footer-brand">xAlienatedx</div>
+                <div class="footer-tagline">Create Your Own Lane. Be Your Own Vibe. Stay Alienated.</div>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <a href="https://xalienatedxofficial.com/collections/all" target="_blank">All Products</a>
                 <a href="https://xalienatedxofficial.com/collections/all" target="_blank">T-Shirts</a>
+                <a href="https://xalienatedxofficial.com/collections/all" target="_blank">Hoodies</a>
                 <a href="https://xalienatedxofficial.com/collections/all" target="_blank">Truckers</a>
                 <a href="https://xalienatedxofficial.com/collections/all" target="_blank">Beanies</a>
+            </div>
+            <div class="footer-col">
+                <h4>Customer Care</h4>
+                <a href="https://xalienatedxofficial.com/search" target="_blank">Search</a>
                 <a href="https://xalienatedxofficial.com/cart" target="_blank">Cart</a>
+            </div>
+            <div class="footer-col">
+                <h4>Be the first to know.</h4>
+                <div class="newsletter-input">
+                    <input type="email" placeholder="Email address">
+                    <button>Submit</button>
+                </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <span>© 2026 xAlienatedx — Create Your Own Lane</span>
-            <span>Payments: PayPal / Venmo</span>
+            <span>© 2026 xAlienatedx</span>
+            <span>Payments: PayPal · Venmo</span>
         </div>
     </footer>
 
     <script>
-        const dot = document.getElementById('cursorDot');
-        const ring = document.getElementById('cursorRing');
-        window.addEventListener('mousemove', e => {
-            dot.style.left = e.clientX + 'px';
-            dot.style.top = e.clientY + 'px';
-            ring.style.left = e.clientX + 'px';
-            ring.style.top = e.clientY + 'px';
-        });
-        document.querySelectorAll('a, button, .product-card, .cat-card').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                ring.style.width = '44px';
-                ring.style.height = '44px';
-                ring.style.backgroundColor = 'rgba(255,107,26,0.1)';
-            });
-            el.addEventListener('mouseleave', () => {
-                ring.style.width = '22px';
-                ring.style.height = '22px';
-                ring.style.backgroundColor = 'transparent';
-            });
-        });
-
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(a => {
-            a.addEventListener('click', e => {
-                e.preventDefault();
-                document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'});
-            });
-        });
+        function slide(id, dir) {
+            const slider = document.getElementById(id);
+            const itemWidth = slider.querySelector('.product-item').offsetWidth + 1;
+            slider.scrollBy({ left: dir * itemWidth * 2, behavior: 'smooth' });
+        }
     </script>
 </body>
 </html>
