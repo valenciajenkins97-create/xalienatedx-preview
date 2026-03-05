@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>xAlienatedx | CREATE YOUR OWN LANE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #08090a;
+            --text-primary: #e0e0e0;
+            --text-dim: #555555;
+            --accent: #ff6b1a;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: none; }
+        body { background: var(--bg-dark); color: var(--text-primary); font-family: 'Space Mono', monospace; overflow-x: hidden; }
+
+        /* NOISE */
+        .noise { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; opacity:0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+        .scan { position:fixed; top:0; left:0; width:100vw; height:2px; background:rgba(255,107,26,0.15); z-index:9998; animation:scan 8s linear infinite; pointer-events:none; }
+        @keyframes scan { 0%{transform:translateY(-100vh)} 100%{transform:translateY(100vh)} }
+
+        /* CURSOR */
+        .cursor-dot, .cursor-ring { position:fixed; top:0; left:0; transform:translate(-50%,-50%); border-radius:50%; z-index:10000; pointer-events:none; transition: transform 0.15s; }
+        .cursor-dot { width:4px; height:4px; background:#ff6b1a; }
+        .cursor-ring { width:22px; height:22px; border:1px solid rgba(255,107,26,0.6); transition:width 0.2s,height 0.2s; }
+
+        /* HEADER */
+        header { position:fixed; top:0; width:100%; padding:1.75rem 2.5rem; display:flex; justify-content:space-between; align-items:center; z-index:100; mix-blend-mode:difference; }
+        .brand-mark { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; letter-spacing:-0.03em; text-transform:uppercase; color:#fff; }
+        .brand-mark span { color: var(--accent); }
+        .nav-links { display:flex; gap:2.5rem; list-style:none; font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; }
+        .nav-links a { color:var(--text-primary); text-decoration:none; transition:color 0.2s; }
+        .nav-links a:hover { color:var(--accent); }
+
+        /* HERO */
+        .hero { height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative;
+            background:radial-gradient(ellipse at 50% 40%, #1a1008 0%, #08090a 65%); text-align:center; }
+        .chrome-blob { position:absolute; border-radius:50%; filter:blur(60px); animation:morph 12s infinite alternate; pointer-events:none; }
+        .blob-1 { width:350px; height:350px; top:15%; left:15%; background:radial-gradient(circle, rgba(255,107,26,0.15), transparent); }
+        .blob-2 { width:450px; height:450px; bottom:15%; right:10%; background:radial-gradient(circle, rgba(200,80,0,0.1), transparent); animation-delay:-6s; }
+        @keyframes morph { 0%{border-radius:40% 60% 70% 30%/40% 50% 60% 50%} 100%{border-radius:60% 40% 30% 70%/50% 40% 50% 60%} }
+
+        .hero-label { font-size:0.7rem; letter-spacing:0.2em; color:var(--accent); margin-bottom:1.5rem; text-transform:uppercase; }
+        .hero-title { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(4rem,14vw,11rem); line-height:0.85; text-transform:uppercase;
+            color:transparent;
+            background:linear-gradient(180deg,#ffffff 0%,#e0e0e0 20%,#888 50%,#404040 51%,#b0b0b0 80%,#fff 100%);
+            -webkit-background-clip:text; background-clip:text;
+            filter:drop-shadow(0 0 20px rgba(255,107,26,0.2));
+            letter-spacing:-0.04em; position:relative; z-index:2; }
+        .hero-title .x { color:transparent; background:linear-gradient(180deg,#ff9f5a,#ff6b1a,#cc4400); -webkit-background-clip:text; background-clip:text; }
+        .hero-sub { margin-top:2rem; font-size:0.75rem; color:var(--text-dim); letter-spacing:0.15em; text-transform:uppercase; display:flex; align-items:center; gap:1rem; }
+        .hero-sub .line { height:1px; width:40px; background:#333; }
+        .hero-cta { margin-top:3.5rem; display:flex; gap:1.5rem; }
+        .btn { padding:1.25rem 2.5rem; background:transparent; border:1px solid; font-family:'Space Mono',monospace; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; text-decoration:none; position:relative; overflow:hidden; transition:all 0.3s cubic-bezier(0.19,1,0.22,1); display:inline-block; }
+        .btn-primary { border-color:var(--accent); color:var(--accent); }
+        .btn-primary::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:var(--accent); transition:left 0.35s cubic-bezier(0.19,1,0.22,1); z-index:-1; }
+        .btn-primary:hover { color:var(--bg-dark); }
+        .btn-primary:hover::before { left:0; }
+        .btn-secondary { border-color:#333; color:var(--text-dim); }
+        .btn-secondary:hover { border-color:#666; color:var(--text-primary); }
+
+        /* DIVIDER */
+        .spike { width:100%; height:80px; overflow:hidden; }
+
+        /* MANIFESTO */
+        .manifesto { padding:6rem 2.5rem; text-align:center; border-top:1px solid #111; }
+        .manifesto p { font-family:'Syne',sans-serif; font-size:clamp(1.5rem,4vw,3rem); font-weight:700; line-height:1.2; max-width:900px; margin:0 auto; text-transform:uppercase; color:#fff; }
+        .manifesto p em { color:var(--accent); font-style:normal; }
+        .manifesto-sub { font-size:0.8rem; color:var(--text-dim); margin-top:2rem; letter-spacing:0.1em; }
+
+        /* PRODUCTS */
+        .products { padding:4rem 0 6rem; }
+        .products-header { padding:0 2.5rem 3rem; display:flex; justify-content:space-between; align-items:flex-end; }
+        .products-header h2 { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(2rem,5vw,4rem); text-transform:uppercase; line-height:0.9; }
+        .products-header h2 span { color:var(--accent); }
+        .products-header a { font-size:0.7rem; color:var(--text-dim); text-decoration:none; letter-spacing:0.12em; text-transform:uppercase; transition:color 0.2s; }
+        .products-header a:hover { color:var(--accent); }
+
+        .grid { display:grid; grid-template-columns:repeat(12,1fr); gap:1rem; padding:0 1rem; }
+
+        .product-card { position:relative; overflow:hidden; border:1px solid #111; transition:border-color 0.3s; }
+        .product-card:hover { border-color:#333; }
+        .product-card:nth-child(1) { grid-column:1/6; height:65vh; margin-top:0; }
+        .product-card:nth-child(2) { grid-column:6/13; height:75vh; }
+        .product-card:nth-child(3) { grid-column:1/5; height:60vh; margin-top:-8rem; }
+        .product-card:nth-child(4) { grid-column:5/9; height:55vh; margin-top:4rem; }
+        .product-card:nth-child(5) { grid-column:9/13; height:55vh; margin-top:1rem; }
+
+        .card-img { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; filter:brightness(0.7) contrast(1.1); transition:transform 0.6s cubic-bezier(0.19,1,0.22,1), filter 0.4s; }
+        .product-card:hover .card-img { transform:scale(1.04); filter:brightness(0.85) contrast(1.1); }
+        .card-overlay { position:absolute; bottom:0; left:0; right:0; padding:1.5rem; background:linear-gradient(to top, rgba(8,9,10,0.95) 0%, transparent 100%); z-index:2; }
+        .card-name { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; text-transform:uppercase; margin-bottom:0.4rem; }
+        .card-price { font-size:0.75rem; color:#888; }
+        .card-link { position:absolute; inset:0; z-index:3; }
+        .card-tag { position:absolute; top:1rem; left:1rem; font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; padding:0.3rem 0.6rem; background:var(--accent); color:#000; font-weight:700; z-index:4; }
+
+        /* CATEGORIES */
+        .categories { padding:6rem 2.5rem; border-top:1px solid #111; }
+        .categories h2 { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(1.5rem,3vw,2.5rem); text-transform:uppercase; margin-bottom:3rem; }
+        .cat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+        .cat-card { border:1px solid #1a1a1a; padding:2.5rem 1.5rem; text-align:center; text-decoration:none; color:var(--text-primary); transition:all 0.3s; position:relative; overflow:hidden; }
+        .cat-card::before { content:''; position:absolute; inset:0; background:var(--accent); transform:scaleY(0); transform-origin:bottom; transition:transform 0.35s cubic-bezier(0.19,1,0.22,1); z-index:0; }
+        .cat-card:hover::before { transform:scaleY(1); }
+        .cat-card:hover { color:#000; border-color:var(--accent); }
+        .cat-icon { font-size:2rem; margin-bottom:1rem; position:relative; z-index:1; }
+        .cat-name { font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; text-transform:uppercase; position:relative; z-index:1; }
+        .cat-count { font-size:0.65rem; color:inherit; opacity:0.6; margin-top:0.3rem; letter-spacing:0.1em; position:relative; z-index:1; }
+
+        /* MARQUEE */
+        .marquee-wrap { border-top:1px solid #111; border-bottom:1px solid #111; overflow:hidden; padding:1rem 0; background:#0d0d0d; }
+        .marquee-track { display:flex; gap:3rem; animation:marquee 24s linear infinite; white-space:nowrap; width:max-content; }
+        .marquee-item { font-family:'Syne',sans-serif; font-weight:800; font-size:1.2rem; text-transform:uppercase; color:#1a1a1a; -webkit-text-stroke:1px #2a2a2a; display:flex; align-items:center; gap:3rem; }
+        .marquee-item .dot { color:var(--accent); -webkit-text-stroke:0; font-size:0.8rem; }
+        @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+        /* ETHOS */
+        .ethos { padding:8rem 2.5rem; display:grid; grid-template-columns:1fr 1fr; gap:6rem; align-items:center; border-top:1px solid #111; }
+        .ethos-text h2 { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(2rem,4vw,3.5rem); text-transform:uppercase; line-height:1; margin-bottom:2rem; }
+        .ethos-text h2 em { color:var(--accent); font-style:normal; display:block; }
+        .ethos-text p { font-size:0.85rem; color:#666; line-height:1.9; max-width:440px; }
+        .ethos-stats { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+        .stat { border-top:1px solid #1a1a1a; padding-top:1.5rem; }
+        .stat-val { font-family:'Syne',sans-serif; font-weight:800; font-size:2.5rem; color:#fff; line-height:1; }
+        .stat-label { font-size:0.65rem; color:#444; text-transform:uppercase; letter-spacing:0.1em; margin-top:0.4rem; }
+
+        /* FOOTER */
+        footer { padding:5rem 2.5rem 2rem; border-top:1px solid #111; }
+        .footer-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4rem; }
+        .footer-brand { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(3rem,7vw,6rem); color:#111; text-transform:uppercase; line-height:0.85; -webkit-text-stroke:1px #222; }
+        .footer-brand span { color:transparent; -webkit-text-stroke:1px var(--accent); }
+        .footer-nav { display:grid; grid-template-columns:repeat(2,1fr); gap:0.5rem 3rem; font-size:0.72rem; }
+        .footer-nav a { color:#444; text-decoration:none; text-transform:uppercase; letter-spacing:0.08em; transition:color 0.2s; }
+        .footer-nav a:hover { color:var(--accent); }
+        .footer-bottom { border-top:1px solid #111; padding-top:1.5rem; display:flex; justify-content:space-between; font-size:0.65rem; color:#333; text-transform:uppercase; letter-spacing:0.08em; }
+
+        /* MOBILE */
+        @media (max-width: 768px) {
+            * { cursor: auto !important; }
+            .cursor-dot, .cursor-ring, .scan { display:none; }
+            header { padding:1.25rem; }
+            .nav-links { gap:1.5rem; }
+            .hero-title { font-size:3.5rem; }
+            .hero-cta { flex-direction:column; align-items:center; }
+            .btn { width:100%; text-align:center; }
+            .grid { display:flex; flex-direction:column; padding:0 1rem; }
+            .product-card { width:100%; height:55vw !important; margin:0 !important; }
+            .cat-grid { grid-template-columns:1fr 1fr; }
+            .ethos { grid-template-columns:1fr; gap:3rem; }
+            .footer-top { flex-direction:column; gap:2rem; }
+            .footer-bottom { flex-direction:column; gap:0.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="noise"></div>
+    <div class="scan"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <header>
+        <div class="brand-mark"><span>x</span>Alienatedx</div>
+        <ul class="nav-links">
+            <li><a href="https://xalienatedxofficial.com/collections/all" target="_blank">Shop</a></li>
+            <li><a href="#products">Collection</a></li>
+            <li><a href="#ethos">About</a></li>
+            <li><a href="https://xalienatedxofficial.com/cart" target="_blank">Cart</a></li>
+        </ul>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="chrome-blob blob-1"></div>
+        <div class="chrome-blob blob-2"></div>
+        <div class="hero-label">[ New Arrivals — 2026 ]</div>
+        <h1 class="hero-title">
+            <span class="x">x</span>ALIEN<br>ATED<span class="x">x</span>
+        </h1>
+        <div class="hero-sub">
+            <span class="line"></span>
+            <span>Create Your Own Lane</span>
+            <span class="line"></span>
+        </div>
+        <div class="hero-cta">
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="btn btn-primary">Shop the Collection</a>
+            <a href="#products" class="btn btn-secondary">View Lookbook</a>
+        </div>
+    </section>
+
+    <!-- SPIKE DIVIDER -->
+    <div class="spike">
+        <svg width="100%" height="100%" viewBox="0 0 1200 80" preserveAspectRatio="none">
+            <path d="M0,40 Q150,40 300,40 L320,8 L340,72 L360,40 L840,40 L860,0 L880,80 L900,40 Q1050,40 1200,40" fill="none" stroke="#1a1a1a" stroke-width="1.5"/>
+        </svg>
+    </div>
+
+    <!-- MANIFESTO -->
+    <section class="manifesto">
+        <p>Be yourself. Life is what you <em>make it</em>. You don't have to fit with any crowd. <em>Alienate yourself</em> from the naysayers and stay in your lane.</p>
+        <div class="manifesto-sub">[ EST. 2021 — STAY ALIENATED ]</div>
+    </section>
+
+    <!-- MARQUEE -->
+    <div class="marquee-wrap">
+        <div class="marquee-track">
+            <span class="marquee-item">CREATE YOUR OWN LANE <span class="dot">◆</span></span>
+            <span class="marquee-item">STAY ALIENATED <span class="dot">◆</span></span>
+            <span class="marquee-item">BE YOUR OWN VIBE <span class="dot">◆</span></span>
+            <span class="marquee-item">CREATE YOUR OWN WAVE <span class="dot">◆</span></span>
+            <span class="marquee-item">xALIENATEDx <span class="dot">◆</span></span>
+            <span class="marquee-item">STAY IN YOUR LANE <span class="dot">◆</span></span>
+            <span class="marquee-item">CREATE YOUR OWN LANE <span class="dot">◆</span></span>
+            <span class="marquee-item">STAY ALIENATED <span class="dot">◆</span></span>
+            <span class="marquee-item">BE YOUR OWN VIBE <span class="dot">◆</span></span>
+            <span class="marquee-item">CREATE YOUR OWN WAVE <span class="dot">◆</span></span>
+            <span class="marquee-item">xALIENATEDx <span class="dot">◆</span></span>
+            <span class="marquee-item">STAY IN YOUR LANE <span class="dot">◆</span></span>
+        </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <section class="products" id="products">
+        <div class="products-header">
+            <h2>THE<br><span>LAYS</span></h2>
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank">View All 16 Products →</a>
+        </div>
+        <div class="grid">
+            <div class="product-card">
+                <div class="card-tag">Signature</div>
+                <img class="card-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/mens-fitted-t-shirt-black-front-63db20f8cb4b7.jpg?v=1675305229" alt="Franky Tee">
+                <div class="card-overlay">
+                    <div class="card-name">Franky Tee</div>
+                    <div class="card-price">$35.00 USD // HEAVYWEIGHT COTTON</div>
+                </div>
+                <a href="https://xalienatedxofficial.com/products/franky-tee" target="_blank" class="card-link"></a>
+            </div>
+            <div class="product-card">
+                <div class="card-tag">Best Seller</div>
+                <img class="card-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-essential-eco-hoodie-desert-dust-front-63f428e876e79.jpg?v=1676945655" alt="Unmasked Hoodie">
+                <div class="card-overlay">
+                    <div class="card-name">Unmasked Hoodie</div>
+                    <div class="card-price">$65.00 USD // UNISEX FIT</div>
+                </div>
+                <a href="https://xalienatedxofficial.com/products/unisex-unmasked-hoodie" target="_blank" class="card-link"></a>
+            </div>
+            <div class="product-card">
+                <img class="card-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-premium-hoodie-black-front-63ddd7f707008.jpg?v=1675483138" alt="Dark Side of the Moon Hoodie">
+                <div class="card-overlay">
+                    <div class="card-name">Dark Side Hoodie</div>
+                    <div class="card-price">$50.00 USD // PREMIUM</div>
+                </div>
+                <a href="https://xalienatedxofficial.com/products/dark-side-of-the-moon-hoodie" target="_blank" class="card-link"></a>
+            </div>
+            <div class="product-card">
+                <img class="card-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/foam-trucker-hat-red-one-size-front-63db29822f0a2.jpg?v=1675307403" alt="Trucker Hat">
+                <div class="card-overlay">
+                    <div class="card-name">xAlienatedx Trucker</div>
+                    <div class="card-price">$35.00 USD // FOAM CAP</div>
+                </div>
+                <a href="https://xalienatedxofficial.com/products/xalienatedx-trucker-2" target="_blank" class="card-link"></a>
+            </div>
+            <div class="product-card">
+                <img class="card-img" src="https://cdn.shopify.com/s/files/1/0545/6897/6555/products/unisex-premium-hoodie-team-royal-front-63dd0536ab5a4.jpg?v=1675429187" alt="Blue Racks Hoodie">
+                <div class="card-overlay">
+                    <div class="card-name">Blue Racks Hoodie</div>
+                    <div class="card-price">$45.00 USD // PREMIUM</div>
+                </div>
+                <a href="https://xalienatedxofficial.com/products/blue-racks-hoodie" target="_blank" class="card-link"></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="categories">
+        <h2>Shop by Category</h2>
+        <div class="cat-grid">
+            <a href="https://xalienatedxofficial.com/collections/all?sort_by=title" target="_blank" class="cat-card">
+                <div class="cat-icon">👕</div>
+                <div class="cat-name">T-Shirts</div>
+                <div class="cat-count">Starting at $35</div>
+            </a>
+            <a href="https://xalienatedxofficial.com/collections/all?sort_by=title" target="_blank" class="cat-card">
+                <div class="cat-icon">🧥</div>
+                <div class="cat-name">Hoodies & Sweats</div>
+                <div class="cat-count">Starting at $45</div>
+            </a>
+            <a href="https://xalienatedxofficial.com/collections/all?sort_by=title" target="_blank" class="cat-card">
+                <div class="cat-icon">🧢</div>
+                <div class="cat-name">Truckers</div>
+                <div class="cat-count">$35 each</div>
+            </a>
+            <a href="https://xalienatedxofficial.com/collections/all?sort_by=title" target="_blank" class="cat-card">
+                <div class="cat-icon">🎽</div>
+                <div class="cat-name">Beanies & More</div>
+                <div class="cat-count">Starting at $20</div>
+            </a>
+        </div>
+    </section>
+
+    <!-- ETHOS -->
+    <section class="ethos" id="ethos">
+        <div class="ethos-text">
+            <h2>Stay In <em>Your Lane.</em></h2>
+            <p>xAlienatedx was built for the ones who never fit in — and never wanted to. We don't follow trends. We don't chase clout. We make gear for people who create their own path, move at their own pace, and refuse to let anyone define them.</p>
+            <br>
+            <p style="color:#444">Be yourself; life is what you make it. You don't have to fit with any crowd just because that's what's in. Alienate yourself from the naysayers and stay in your lane.</p>
+            <br>
+            <a href="https://xalienatedxofficial.com/collections/all" target="_blank" class="btn btn-primary" style="cursor:pointer">Shop Now →</a>
+        </div>
+        <div class="ethos-stats">
+            <div class="stat">
+                <div class="stat-val">16+</div>
+                <div class="stat-label">Products Available</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val">$20</div>
+                <div class="stat-label">Starting Price</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val">100%</div>
+                <div class="stat-label">Stay Alienated</div>
+            </div>
+            <div class="stat">
+                <div class="stat-val">0</div>
+                <div class="stat-label">F*cks Given</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-top">
+            <div class="footer-brand"><span>x</span>ALIENATED<span>x</span></div>
+            <div class="footer-nav">
+                <a href="https://xalienatedxofficial.com/collections/all" target="_blank">Shop All</a>
+                <a href="https://xalienatedxofficial.com/collections/all" target="_blank">Hoodies</a>
+                <a href="https://xalienatedxofficial.com/collections/all" target="_blank">T-Shirts</a>
+                <a href="https://xalienatedxofficial.com/collections/all" target="_blank">Truckers</a>
+                <a href="https://xalienatedxofficial.com/collections/all" target="_blank">Beanies</a>
+                <a href="https://xalienatedxofficial.com/cart" target="_blank">Cart</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 xAlienatedx — Create Your Own Lane</span>
+            <span>Payments: PayPal / Venmo</span>
+        </div>
+    </footer>
+
+    <script>
+        const dot = document.getElementById('cursorDot');
+        const ring = document.getElementById('cursorRing');
+        window.addEventListener('mousemove', e => {
+            dot.style.left = e.clientX + 'px';
+            dot.style.top = e.clientY + 'px';
+            ring.style.left = e.clientX + 'px';
+            ring.style.top = e.clientY + 'px';
+        });
+        document.querySelectorAll('a, button, .product-card, .cat-card').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                ring.style.width = '44px';
+                ring.style.height = '44px';
+                ring.style.backgroundColor = 'rgba(255,107,26,0.1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                ring.style.width = '22px';
+                ring.style.height = '22px';
+                ring.style.backgroundColor = 'transparent';
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                document.querySelector(a.getAttribute('href'))?.scrollIntoView({behavior:'smooth'});
+            });
+        });
+    </script>
+</body>
+</html>
